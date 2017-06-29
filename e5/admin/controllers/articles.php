@@ -1,0 +1,92 @@
+<?php
+
+function action_index() {
+  $result = array();
+
+  $result['articles_list'] = all_articles();
+  $result['render_template'] = 'index';
+
+  return $result;
+}
+
+function action_show() {
+  $result = array();
+
+  $result['myrow'] = get_article($_GET['id']);
+  $result['render_template'] = 'edit';
+
+  return $result;
+}
+
+function action_new() {
+  $result = array();
+
+  $result['render_template'] = 'new';
+
+  return $result;
+}
+
+function action_create() {
+  $result = array();
+  if (isset($_POST['title']) && isset($_POST['meta_d']) && isset($_POST['meta_k']) && isset($_POST['date']) && isset($_POST['description']) && isset($_POST['text']) && isset($_POST['author']))
+  {
+    $r = create_article($_POST['title'], $_POST['meta_d'], $_POST['meta_k'], $_POST['date'], $_POST['description'], $_POST['text'], $_POST['author']);
+
+    if ($r == 'true') {$result['render_content'] = "<p>Success</p><a href=\"index.php\">Back to list</a>"; }
+    else {$result['render_content'] = "<p>Fail!</p>";}
+  }
+  else
+  {
+    $result['render_content'] = "<p>Not valid.</p>";
+  }
+
+  return $result;
+}
+
+function action_edit() {
+  $result = array();
+
+  $result['myrow'] = get_article($_GET['id']);
+  $result['render_template'] = 'edit';
+
+  return $result;
+}
+
+function action_update() {
+  $result = array();
+
+  if (isset($_POST['title']) && isset($_POST['meta_d']) && isset($_POST['meta_k']) && isset($_POST['text']) )
+  {
+    $r = update_article($_POST['id'], $_POST['title'], $_POST['meta_d'], $_POST['meta_k'], $_POST['text']);
+
+    if ($r == 'true') {$result['render_content'] = "<p>Success</p><a href=\"index.php\">Back to list</a>"; }
+    else {$result['render_content'] = "<p>Fail!</p>";}
+  }
+  else
+  {
+    $result['render_content'] = "<p>Not valid.</p>";
+  }
+
+  return $result;
+}
+
+function action_delete() {
+  $result = array();
+
+  if (isset($_GET['id'])  )
+  {
+    $r = delete_article($_GET['id']);
+
+    if ($r == 'true') {$result['render_content'] = "<p>Success</p><a href=\"index.php\">Back to list</a>"; }
+    else {$result['render_content'] = "<p>Fail!</p>";}
+  }
+
+  return $result;
+}
+
+
+
+$action = isset($_GET['action']) ? $_GET['action'] : 'index';
+$result = include "lib/rest.php";
+
+extract($result);
